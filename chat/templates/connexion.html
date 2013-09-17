@@ -1,0 +1,282 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<link rel="shortcut icon" href="{% static 'bootstrap/assets/ico/favicon.png'%}">
+
+		<title>Jumbotron Template for Bootstrap</title>
+
+		<!-- Bootstrap core CSS -->
+		<link href="{% static 'bootstrap/dist/css/bootstrap.css' %}" rel="stylesheet">
+
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+		<script src="../../assets/js/html5shiv.js"></script>
+		<script src="../../assets/js/respond.min.js"></script>
+		<![endif]-->
+		<style>
+			body {
+				padding-top: 70px;
+				padding-bottom: 20px;
+			}
+		</style>
+
+	</head>
+
+	<body style="height:100%;min-height:500px;background-color: #3a87ad;">
+
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">Chat</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li class="active">
+							<a href="#">Home</a>
+						</li>
+
+						{% if user.is_authenticated %}
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }} <b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="{%url 'deconnexion'%}">Logout</a>
+								</li>
+
+							</ul>
+						</li>
+						{%endif%}
+					</ul>
+					{% if error %}
+					<p>
+						<strong>Utilisateur inexistant ou mauvais de mot de passe.</strong>
+					</p>
+					{% endif %}
+
+					{% if user.is_authenticated %}
+
+					{% else %}
+					<form method="post" action="." class="navbar-form navbar-right">
+
+						{% csrf_token %}
+
+						{%  for field in form%}
+						<div class="form-group">
+							{{ field}}
+						</div>
+						{% endfor %}
+
+						<button type="submit" class="btn btn-success">
+							Sign in
+						</button>
+					</form>
+					{% endif %}
+
+				</div><!--/.navbar-collapse -->
+			</div>
+		</div>
+
+		<div class="container" style="height:100%;min-height:400px;max-height:400px;background-color: #3a87ad;">
+			<!-- Example row of columns -->
+			<div class="row fill">
+				<div  class="col-lg-9 ">
+					<div id ="cadre_message"  style="overflow:auto;max-height: 400px;min-height: 400px;height: 80%;">
+						{% block liste_message %}
+						{% if user.is_authenticated %}
+
+						{%for message in message_list%}
+						<div class="well well-sm">
+							<a data-dismiss="alert" class="well_close close" href="#">×</a>
+
+							<p id="message{{message.pk}}">
+								{{message.date}} {{ message.auteur}} : {{ message.contenu}}
+							</p>
+
+						</div>
+
+						{%endfor%}
+						{%endif%}
+						{% endblock %}
+
+					</div>
+
+					<div style="padding-bottom:43px;padding-top:10px;background-color: #3a87ad;" class="well" >
+						<form method="post" action="{%url 'add_message'%}">
+							{% csrf_token %}
+
+							{%  for field in form_message%}
+							<div class="form-group">
+								{{ field}}
+							</div>
+							{% endfor %}
+							<button type="submit" class="btn btn-success pull-right">
+								Send
+							</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-lg-3 well" style="padding-top: 10px;background-color: #3a87ad;">
+
+					{% if user.is_authenticated %}
+
+					{%for user_co in user_connected%}
+					{%ifequal user.username user_co.username%}
+					<div class="well  well-sm" style='background-color:#5cb85c;margin-bottom:10px!important'>
+						{%else%}
+						<div class="well  well-sm" style='margin-bottom:10px!important'>
+							{%endifequal%}
+							<p>
+								{{user_co.username}}
+
+							</p>
+						</div>
+
+						{%endfor%}
+						{%endif%}
+					</div>
+
+				</div>
+
+				<hr>
+
+				<footer>
+
+				</footer>
+			</div>
+			<!-- /container -->
+
+			<!-- Bootstrap core JavaScript
+			================================================== -->
+			<!-- Placed at the end of the document so the pages load faster -->
+			<script src="{% static 'bootstrap/assets/js/jquery.js'%}"></script>
+			<script src="{% static 'bootstrap/dist/js/bootstrap.min.js'%}"></script>
+
+			<script src="{% static 'main.js'%}"></script>
+			<script>
+				jQuery(document).ready(function($) {
+					// --------------------------
+					// ---------using ajax-------
+					// --------------------------
+					// using jQuery
+
+					//// fix google chrome erase csrftoken mistake ajax erreor csrf refresh page
+					function createCookie(name, value, days) {
+						if (days) {
+							var date = new Date();
+							date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+							var expires = "; expires=" + date.toGMTString();
+						} else
+							var expires = "";
+						document.cookie = name + "=" + value + expires + "; path=/";
+					}
+
+					createCookie(csrftoken, "", -1);
+
+					function getCookie(name) {
+						var cookieValue = null;
+						if (document.cookie && document.cookie != '') {
+							var cookies = document.cookie.split(';');
+							for (var i = 0; i < cookies.length; i++) {
+								var cookie = jQuery.trim(cookies[i]);
+								// Does this cookie string begin with the name we want?
+								if (cookie.substring(0, name.length + 1) == (name + '=')) {
+									cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+									break;
+								}
+							}
+						}
+						return cookieValue;
+					}
+
+					var csrftoken = getCookie('csrftoken');
+					function csrfSafeMethod(method) {
+						// these HTTP methods do not require CSRF protection
+						return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+					}
+
+					function sameOrigin(url) {
+						// test that a given url is a same-origin URL
+						// url could be relative or scheme relative or absolute
+						var host = document.location.host;
+						// host + port
+						var protocol = document.location.protocol;
+						var sr_origin = '//' + host;
+						var origin = protocol + sr_origin;
+						// Allow absolute or scheme relative URLs to same origin
+						return (url == origin || url.slice(0, origin.length + 1) == origin + '/') || (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+						// or any other URL that isn't scheme relative or absolute i.e relative.
+						!(/^(\/\/|http:|https:).*/.test(url));
+					}
+
+
+					$.ajaxSetup({
+						beforeSend : function(xhr, settings) {
+							if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+								// Send the token to same-origin, relative URLs only.
+								// Send the token only if the method warrants CSRF protection
+								// Using the CSRFToken value acquired earlier
+								xhr.setRequestHeader("X-CSRFToken", csrftoken);
+							}
+						}
+					});
+					// --------------------------
+					// ---------end using ajax-------
+					// --------------------------
+
+					//ajax
+					function check_message() {
+
+						message_temp = $("#cadre_message").find("p[id^='message']");
+						last_message_id = message_temp[message_temp.length - 1].id;
+
+						last_message_id = last_message_id.replace("message", "");
+
+						$.ajax({
+							type : "POST",
+							dataType : "json",
+							data: { "last_message_id" :last_message_id},
+							url : '{%url "check_messages_ajax"%}',
+							success : function(data) {
+								console.log(data);
+								
+								for(var i=0,j=data.length; i<j; i++){
+								  
+								  console.log(data);
+								   $.each(data, function(index, message) {
+							           console.log(message);
+							            $('#cadre_message').append(
+									'<div class="well well-sm">\
+										<a data-dismiss="alert" class="well_close close" href="#">×</a>\
+										<p id="message'+data[i].pk+'">\
+											'+data[i].fields.date+' '+ data[i].fields.auteur+': '+  data[i].fields.contenu+'\
+										</p>\
+									</div>');
+							        });
+								  
+								 
+								};
+							
+							},
+							error : function(data) {
+								console.log("erreur", data);
+							}
+						});
+					}
+
+					setInterval(check_message, 500);
+
+				});
+			</script>
+	</body>
+</html>

@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+
+{% block liste_message %}
+{% for message in derniers_messages %}
+<div class="well well-sm">
+	<a data-dismiss="alert" class="well_close close" href="#">×</a>
+
+	<p>
+		{{message.date}} {{ message.auteur}} : {{ message.contenu}}
+	</p>
+	
+</div>
+{% endfor %}
+
+{% endblock %}
