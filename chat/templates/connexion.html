@@ -171,7 +171,7 @@
 					// using jQuery
 
 					//// fix google chrome erase csrftoken mistake ajax erreor csrf refresh page
-					function createCookie(name, value, days) {
+				/*	function createCookie(name, value, days) {
 						if (days) {
 							var date = new Date();
 							date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -216,8 +216,8 @@
 						// Allow absolute or scheme relative URLs to same origin
 						return (url == origin || url.slice(0, origin.length + 1) == origin + '/') || (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
 						// or any other URL that isn't scheme relative or absolute i.e relative.
-						!(/^(\/\/|http:|https:).*/.test(url));
-					}
+						!(/^(\/\/|http:|https:).*///.test(url));
+				/*	}
 
 
 					$.ajaxSetup({
@@ -229,7 +229,7 @@
 								xhr.setRequestHeader("X-CSRFToken", csrftoken);
 							}
 						}
-					});
+					});*/
 					// --------------------------
 					// ---------end using ajax-------
 					// --------------------------
@@ -274,7 +274,7 @@
 						});
 					}
 
-					setInterval(check_message, 500);
+					setInterval(check_message, 1000);
 
 				});
 			</script>

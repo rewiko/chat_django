@@ -10,11 +10,13 @@ from django.core.urlresolvers import reverse
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
  
 def home(request):
     return render(request, 'home.html', {'current_date': datetime.now()})
 
+@csrf_exempt
 def add_message(request):
     if request.user.is_authenticated(): 
         if request.method == "POST":
